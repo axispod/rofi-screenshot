@@ -1,7 +1,5 @@
 ## rofi-screenshot
 
-![](https://imgur.com/7io5BKJ.gif)
-
 I got sick of not having a simple solution to take screenshots and screencasts.
 
 Plus, there's so many different things I might want to do I struggle to find key bindings for all of them. So, I created a script to show and execute various screen capture related commands in Rofi.
@@ -20,7 +18,7 @@ Make sure you have the required [dependencies](#dependencies) installed.
 Download the rofi-screenshot source code, save as rofi-screenshot and make it executable
 
 ```bash
-curl -L https://git.io/rofi-screenshot > rofi-screenshot && chmod u+x rofi-screenshot
+curl -L https://raw.githubusercontent.com/axispod/rofi-screenshot/refs/heads/master/rofi-screenshot > rofi-screenshot && chmod u+x rofi-screenshot
 ```
 
 Then move rofi-screenshot to somewhere in your $PATH for example:
@@ -59,3 +57,4 @@ rofi-screenshot -s
 * [satty](https://github.com/gabm/Satty)
 * [wl-copy](https://github.com/bugaevc/wl-clipboard)
 * [wf-recorder](https://github.com/ammen99/wf-recorder)
+* [slurp](https://github.com/emersion/slurp)
