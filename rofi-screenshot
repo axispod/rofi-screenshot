@@ -32,15 +32,6 @@ video_to_gif() {
     ffmpeg -i "$1" -i - -filter_complex paletteuse "$2"
 }
 
-countdown() {
-  notify-send --app-name="screenshot" "Screenshot" "Recording in 3" -t 1000
-  sleep 1
-  notify-send --app-name="screenshot" "Screenshot" "Recording in 2" -t 1000
-  sleep 1
-  notify-send --app-name="screenshot" "Screenshot" "Recording in 1" -t 1000
-  sleep 1
-}
-
 makescreenshot() {
   notify-send --app-name="screenshot" "Screenshot" "Select a region to capture"
   dt=$2
@@ -174,7 +165,7 @@ main() {
   shift $(expr $OPTIND - 1)
 
   # Get choice from rofi
-  choice=$( (get_options) | rofi -dmenu -i -fuzzy -p "Screenshot")
+  choice=$( (get_options) | rofi -dmenu -i -fuzzy -p "Screenshot" -theme-str 'window {width: 20em;} listview {lines: 7;}')
 
   # If user has not picked anything, exit
   if [[ -z "${choice// /}" ]]; then
