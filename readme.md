@@ -1,5 +1,7 @@
 ## rofi-screenshot
 
+![Example](https://raw.githubusercontent.com/axispod/rofi-screenshot/refs/heads/master/rofi-screenshot.gif)
+
 I got sick of not having a simple solution to take screenshots and screencasts.
 
 Plus, there's so many different things I might want to do I struggle to find key bindings for all of them. So, I created a script to show and execute various screen capture related commands in Rofi.
