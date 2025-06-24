@@ -58,3 +58,4 @@ rofi-screenshot -s
 * [hyprshot](https://github.com/Gustash/Hyprshot)
 * [satty](https://github.com/gabm/Satty)
 * [wl-copy](https://github.com/bugaevc/wl-clipboard)
+* [wf-recorder](https://github.com/ammen99/wf-recorder)

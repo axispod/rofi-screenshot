@@ -50,47 +50,36 @@ makescreenshot() {
   notify-send --app-name="screenshot" "Screenshot" "Selection copied to Clipboard and Saved to $dp"
 }
 
-rgrtf() {
+rgtf() {
   notify-send --app-name="screenshot" "Screenshot" "Select a region to record"
   dt=$1
-  ffcast -q "$(slop -n -f '-g %g ' && countdown)" rec /tmp/screenshot_gif.mp4
+  #ffcast -q "$(slop -n -f '-g %g ' && countdown)" rec /tmp/screenshot_gif.mp4
+  wf-recorder -g "$(slurp)" -m mp4 -f /tmp/screenshot_gif.mp4 &
+  pid=$!
+  notify-send --app-name="screenshot" "Screenshot" "Recording video" -w --action="kill $pid"="Stop Recording" | xargs -I{} bash -c "{}"
   notify-send --app-name="screenshot" "Screenshot" "Converting to gif… (can take a while)"
   video_to_gif /tmp/screenshot_gif.mp4 "$screenshot_directory/$dt.gif"
   rm /tmp/screenshot_gif.mp4
   notify-send --app-name="screenshot" "Screenshot" "Saved to ${screenshot_directory//${HOME}/~}/$dt.gif"
 }
 
-rgstf() {
-  countdown
-  dt=$1
-  ffcast -q rec /tmp/screenshot_gif.mp4
-  notify-send --app-name="screenshot" "Screenshot" "Converting to gif… (can take a while)"
-  video_to_gif /tmp/screenshot_gif.mp4 "$screenshot_directory/$dt.gif"
-  rm /tmp/screenshot_gif.mp4
-  notify-send --app-name="screenshot" "Screenshot" "Saved to ${screenshot_directory//${HOME}/~}/$dt.gif"
-}
-
-rvrtf() {
+rvtf() {
   notify-send --app-name="screenshot" "Screenshot" "Select a region to record"
   dt=$1
-  ffcast -q "$(slop -n -f '-g %g ' && countdown)" rec "$screenshot_directory/$dt.mp4"
-  notify-send --app-name="screenshot" "Screenshot" "Saved to ${screenshot_directory//${HOME}/~}/$dt.mp4"
-}
-
-rvstf() {
-  countdown
-  dt=$1
-  ffcast -q rec "$screenshot_directory/$dt.mp4"
-  notify-send --app-name="screenshot" "Screenshot" "Saved to ${screenshot_directory//${HOME}/~}/$dt.mp4"
+  dp="$screenshot_directory/$dt.mp4"
+  wf-recorder -g "$(slurp)" $2 -m mp4 -f "$dp" &
+  pid=$!
+  notify-send --app-name="screenshot" "Screenshot" "Recording to ${screenshot_directory//${HOME}/~}/$dt.mp4" -w --action="kill $pid"="Stop Recording" | xargs -I{} bash -c "{}"
+  wl-copy -t video/mp4 <"$dp"
 }
 
 stop_recording() {
-  if [ -z "$(pgrep -fxn '(/\S+)*ffmpeg\s.*\sx11grab\s.*')" ]; then
+  if [ -z "$(pgrep wf-recorder)" ]; then
     notify-send --app-name="screenshot" "Screenshot" "No recording found"
     exit 1
   fi
 
-  pkill -fxn '(/\S+)*ffmpeg\s.*\sx11grab\s.*'
+  killall wf-recorder
   notify-send --app-name="screenshot" "Screenshot" "Recording stopped"
 }
 
@@ -99,9 +88,8 @@ get_options() {
   echo "  Window"
   echo "  Screen"
   echo "  Region  File (GIF)"
-  echo "  Screen  File (GIF)"
   echo "  Region  File (MP4)"
-  echo "  Screen  File (MP4)"
+  echo "  Region  File (MP4 with Audio)"
   echo "  Stop recording"
 }
 
@@ -142,6 +130,8 @@ main() {
   check_deps wl-copy
   check_deps satty
   check_deps rofi
+  check_deps wf-recorder
+  check_deps slurp
 
   # rebind long args as short ones
   for arg in "$@"; do
@@ -197,25 +187,22 @@ main() {
   # run the selected command
   case $choice in
   '  Region')
-    makescreenshot "region" "$dt"
+    makescreenshot region "$dt"
     ;;
   '  Window')
-    makescreenshot "window" "$dt"
+    makescreenshot window "$dt"
     ;;
   '  Screen')
-    makescreenshot "output" "$dt"
+    makescreenshot output "$dt"
     ;;
   '  Region  File (GIF)')
-    rgrtf "$dt"
-    ;;
-  '  Screen  File (GIF)')
-    rgstf "$dt"
+    rgtf "$dt"
     ;;
   '  Region  File (MP4)')
-    rvrtf "$dt"
+    rvtf "$dt"
     ;;
-  '  Screen  File (MP4)')
-    rvstf "$dt"
+  '  Region  File (MP4 with Audio)')
+    rvtf "$dt" -a
     ;;
   '  Stop recording')
     stop_recording
@@ -229,5 +216,3 @@ main() {
 main "$@" &
 
 exit 0
-
-! /bin/bash
